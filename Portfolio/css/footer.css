@@ -1,0 +1,29 @@
+footer {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgb(0, 9, 9);
+    padding: 1% 11%;
+    padding-bottom: 0px;
+}
+.contain {
+    display: flex;
+    justify-content: space-between;    
+}
+.contactInfo{
+    width: 70%;
+    line-height: 30px;
+    padding-bottom: 15px;
+}
+.contactInfo h1{
+    margin-bottom: 20px;
+    font-size: 40px;
+}
+.socialLink{
+    width: 30%;
+    display: flex;
+    justify-content: space-around;
+    place-items: center;
+}
+.copyRight{
+    background-color: rgba(217, 153, 52,1);
+    text-align:center;
+}

@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #acaeb0;
+    color: #2f3336;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #24292e;
+}
+
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: rgb(241, 235, 235);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-left: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: rgb(250, 235, 235);
+}
+
+.project-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px;
+}
+
+.project-section h2 {
+    margin-bottom: 30px;
+    color: #000000;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.project-card {
+    background-color: #ffffff;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.project-card a {
+    text-decoration: none;
+    color: #090909;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.project-card p {
+    margin-top: 10px;
+}
