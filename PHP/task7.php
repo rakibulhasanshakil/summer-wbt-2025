@@ -1,6 +1,6 @@
 <?php
 for ($i=1; $i<=3; $i++){
-    for($j=1; $j<=$i $j++){
+    for($j=1; $j<=$i; $j++){
         echo "* ";
     }
 
@@ -9,7 +9,7 @@ for ($i=1; $i<=3; $i++){
 $cont = 1;
 for ($i = 3; $i >= 1; $i--) {
     for ($j = 1; $j <= $i; $j++) {
-        echo $cont . " ";
+        echo   "$cont ";
         $cont++;
     }
     echo "<br>";
@@ -19,7 +19,7 @@ for ($i = 3; $i >= 1; $i--) {
 $charecter = 'A';
 for ($i = 1; $i <= 3; $i++) {
     for ($j = 1; $j <= $i; $j++) {
-        echo $ch . " ";
+        echo "$charecter";
         $charecter++;
     }
     echo "<br>";
