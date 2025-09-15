@@ -1,0 +1,6 @@
+/* same layout as signin with slight differences */
+.container { max-width:520px; margin:32px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+.container h2 { color:#3498db; text-align:center; margin-bottom:12px; }
+label { display:block; margin-top:8px; font-weight:600; }
+input, select { width:100%; padding:10px; margin-top:6px; border:1px solid #ddd; border-radius:6px; }
+button { margin-top:12px; background:#3498db; color:#fff; padding:10px 14px; border:none; border-radius:6px; cursor:pointer; width:100%; font-weight:700; }

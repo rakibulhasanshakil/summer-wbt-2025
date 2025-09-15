@@ -1,76 +1,67 @@
 <?php
+require_once "includes/db.php";
 session_start();
-include("includes/database.php");
-
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
+    header("Location: /hotel_management_system/signin.php");
+    exit;
 }
+$uid = intval($_SESSION['user_id']);
+$error = $success = '';
 
-$user_id = $_SESSION['user_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $fullname = trim($_POST['fullname'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-// Fetch user info
-$user = $conn->query("SELECT * FROM users WHERE id=$user_id")->fetch_assoc();
-
-// Handle profile update
-if(isset($_POST['update'])) {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-
-    $conn->query("UPDATE users SET username='$username', email='$email' WHERE id=$user_id");
-    echo "Profile updated successfully!";
-    $user = $conn->query("SELECT * FROM users WHERE id=$user_id")->fetch_assoc();
-}
-
-// Handle password change
-if(isset($_POST['change_pass'])) {
-    $current = $_POST['current_password'];
-    $new = $_POST['new_password'];
-
-    // Check current password
-    if(password_verify($current, $user['password'])) {
-        $new_hash = password_hash($new, PASSWORD_DEFAULT);
-        $conn->query("UPDATE users SET password='$new_hash' WHERE id=$user_id");
-        echo "Password changed successfully!";
-    } else {
-        echo "Current password is incorrect!";
+    if (!$fullname) $error = "Full name required.";
+    else {
+        if ($password) {
+            if (strlen($password) < 6) { $error = "Password must be >= 6 chars."; }
+            else {
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $conn->prepare("UPDATE users SET fullname=?, phone=?, password=? WHERE id=?");
+                $stmt->bind_param("sssi",$fullname,$phone,$hash,$uid);
+            }
+        } else {
+            $stmt = $conn->prepare("UPDATE users SET fullname=?, phone=? WHERE id=?");
+            $stmt->bind_param("ssi",$fullname,$phone,$uid);
+        }
+        if (!$error) {
+            if ($stmt->execute()) {
+                $success = "Profile updated.";
+                $_SESSION['fullname'] = $fullname;
+            } else {
+                $error = "Update failed: " . $conn->error;
+            }
+            $stmt->close();
+        }
     }
 }
 
-// Handle account deletion
-if(isset($_POST['delete_account'])) {
-    $conn->query("DELETE FROM users WHERE id=$user_id");
-    session_destroy();
-    header("Location: register.php");
-    exit();
-}
+// fetch user
+$stmt = $conn->prepare("SELECT fullname,email,phone,usertype FROM users WHERE id=?");
+$stmt->bind_param("i",$uid);
+$stmt->execute();
+$res = $stmt->get_result();
+$user = $res->fetch_assoc();
+$stmt->close();
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Profile</title>
-</head>
-<body>
-    <h2>My Profile</h2>
-
-    <h3>Update Profile</h3>
-    <form method="POST">
-        Username: <input type="text" name="username" value="<?= $user['username'] ?>" required><br>
-        Email: <input type="email" name="email" value="<?= $user['email'] ?>" required><br>
-        <button type="submit" name="update">Update Profile</button>
-    </form>
-
-    <h3>Change Password</h3>
-    <form method="POST">
-        Current Password: <input type="password" name="current_password" required><br>
-        New Password: <input type="password" name="new_password" required><br>
-        <button type="submit" name="change_pass">Change Password</button>
-    </form>
-
-    <h3>Delete Account</h3>
-    <form method="POST" onsubmit="return confirm('Are you sure you want to delete your account?');">
-        <button type="submit" name="delete_account">Delete My Account</button>
-    </form>
-</body>
-</html>
+<?php include("includes/header.php"); include("includes/navbar.php"); ?>
+<link rel="stylesheet" href="/hotel_management_system/css/signup.css">
+<div class="container">
+  <h2>Profile</h2>
+  <?php if ($error) echo "<div class='error'>{$error}</div>"; ?>
+  <?php if ($success) echo "<div class='success'>{$success}</div>"; ?>
+  <form method="post" action="profile.php">
+    <label>Full Name</label>
+    <input type="text" name="fullname" value="<?php echo htmlspecialchars($user['fullname']); ?>" required>
+    <label>Email (cannot change)</label>
+    <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
+    <label>Phone</label>
+    <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>">
+    <label>New Password (leave blank to keep)</label>
+    <input type="password" name="password" placeholder="New password">
+    <button type="submit">Save Profile</button>
+  </form>
+</div>
+<?php include("includes/footer.php"); ?>
