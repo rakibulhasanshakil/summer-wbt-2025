@@ -23,22 +23,30 @@ include("../includes/header.php");
 include("../includes/navbar.php");
 ?>
 <div class="container">
-  <h2>Manage Users</h2>
-  <div class="list">
-    <table style="width:100%; border-collapse:collapse;">
-      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody>
-      <?php
-        $res = $conn->query("SELECT id,fullname,email,usertype,status,created_at FROM users ORDER BY id DESC");
-        while ($u = $res->fetch_assoc()) {
-          echo "<tr style='border-top:1px solid #eee;'><td>{$u['id']}</td><td>".htmlspecialchars($u['fullname'])."</td><td>".htmlspecialchars($u['email'])."</td><td>{$u['usertype']}</td><td>{$u['status']}</td><td>";
-          if ($u['status']=='active') echo "<a href='?action=block&id={$u['id']}'>Block</a> | ";
-          else echo "<a href='?action=approve&id={$u['id']}'>Approve</a> | ";
-          echo "<a href='?action=delete&id={$u['id']}' onclick='return confirm(\"Delete user?\")'>Delete</a></td></tr>";
-        }
-      ?>
-      </tbody>
-    </table>
-  </div>
+<h2>Manage Users</h2>
+<div class="list">
+<table style="width:100%; border-collapse:collapse;">
+<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>NID/Passport</th><th>Type</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+<tbody>
+<?php
+$res = $conn->query("SELECT id,fullname,email,usertype,status,nid_passport,created_at FROM users ORDER BY id DESC");
+while ($u = $res->fetch_assoc()) {
+    echo "<tr style='border-top:1px solid #eee;'>
+      <td>{$u['id']}</td>
+      <td>".htmlspecialchars($u['fullname'])."</td>
+      <td>".htmlspecialchars($u['email'])."</td>
+      <td>".htmlspecialchars($u['nid_passport'])."</td>
+      <td>{$u['usertype']}</td>
+      <td>{$u['status']}</td>
+      <td>{$u['created_at']}</td>
+      <td>";
+    if ($u['status']=='active') echo "<a href='?action=block&id={$u['id']}'>Block</a> | ";
+    else echo "<a href='?action=approve&id={$u['id']}'>Approve</a> | ";
+    echo "<a href='?action=delete&id={$u['id']}' onclick='return confirm(\"Delete user?\")'>Delete</a></td></tr>";
+}
+?>
+</tbody>
+</table>
+</div>
 </div>
 <?php include("../includes/footer.php"); ?>
