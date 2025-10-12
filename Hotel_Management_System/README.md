@@ -12,7 +12,6 @@ Features include:
 - Admin dashboard to add/edit/delete rooms  
 - Password reset functionality via email  
 - Responsive design  
-
 ---
 
 ## Table of Contents
