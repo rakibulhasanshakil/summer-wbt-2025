@@ -98,4 +98,4 @@ This project is licensed under the **MIT License**. See `LICENSE` for more infor
 1. Ensure XAMPP is running.  
 2. Test user registration, login, room booking, and password reset.  
 3. Test admin dashboard functionalities.  
-4. Check responsiveness of the pages on desktop and mobile.  
+4. Check responsiveness of the pages on desktop.  
