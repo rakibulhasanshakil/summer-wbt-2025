@@ -2,7 +2,7 @@
 # Hotel Management System
 
 ## Project Description
-This is a **Hotel Management System** built with **PHP, MySQL, and HTML/CSS**.  
+This is a **Hotel Management System** built with **PHP, MySQL, and HTML CSS**.  
 It allows users to view available rooms, book rooms, and manage bookings. Admins can manage rooms, users, and bookings, as well as reset passwords.
 
 Features include:  
@@ -30,7 +30,7 @@ Features include:
 ## How to Install and Run the Project
 1. **Download the project** from GitHub.  
 2. **Install XAMPP or any local server** (Apache + MySQL).  
-3. Place the project folder inside `htdocs` (e.g., `C:\xampp\htdocs\hotel_management_system`).  
+3. Place the project folder inside `htdocs` (e.g., `C:\xampp\htdocs\Hotel_Management_System`).  
 4. **Import the database:**  
    - Open **phpMyAdmin** (`http://localhost/phpmyadmin`)  
    - Create a new database (e.g., `hotel_db`)  
@@ -41,7 +41,7 @@ Features include:
 6. Start **Apache** and **MySQL** from XAMPP control panel.  
 7. Open the project in your browser:  
    ```
-   http://localhost/hotel_management_system/
+   http://localhost/Hotel_Management_System/
    ```
 
 ---
@@ -60,11 +60,17 @@ Features include:
 4. Manage users and bookings.  
 5. Reset or change passwords for users if necessary.  
 
+### For Receiptionist
+1. Login with receiptionist credentials.  
+2. Access the **Receiptionist Dashboard**.  
+3. Manage Bookings & Check-in_Check-out.  
+4. Manage payments.  
+5. Reset or change passwords for users if necessary. 
 ---
 
 ## Credits
-- Developed by **[Your Name]**  
-- Uses **PHP**, **MySQL**, **HTML/CSS**, **JavaScript**, and **PHPMailer**.  
+- Developed by **[Rakibul Hasan Shakil]**  
+- Uses **PHP**, **MySQL**, **HTML**, **CSS**, **JavaScript**.  
 
 ---
 
