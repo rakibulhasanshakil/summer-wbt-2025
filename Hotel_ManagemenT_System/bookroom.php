@@ -171,74 +171,186 @@ $services = [];
 while ($s = $svcRes->fetch_assoc()) $services[] = $s;
 
 include("includes/header.php");
-include("includes/navbar.php");
 ?>
 
-<link rel="stylesheet" href="/hotel_management_system/css/bookroom.css">
-<div class="container">
-<center><h2 style="color:#1abc9c;">Book a Room</h2></center>
-<?php if ($error) echo "<div class='error'>{$error}</div>"; ?>
-<?php if ($success) echo "<div class='success'>{$success}</div>"; ?>
-
-<form class="bookroom-form" method="post" action="bookroom.php" onsubmit="return prepareBookingDates()">
-
-    <label for="name">Full Name</label>
-    <input type="text" id="name" name="name" value="<?= htmlspecialchars($_SESSION['fullname'] ?? '') ?>" required>
-
-    <label for="email">Email Address</label>
-    <input type="email" id="email" name="email" value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" required>
-
-    <label for="phone">Phone Number</label>
-    <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($_SESSION['phone'] ?? '') ?>" required>
-
-    <label for="checkin">Check-in Date</label>
-    <input type="text" id="checkin" name="checkin" placeholder="dd/mm/yyyy" required readonly>
-
-    <label for="checkout">Check-out Date</label>
-    <input type="text" id="checkout" name="checkout" placeholder="dd/mm/yyyy" required readonly>
-
-    <label for="room_id">Select Room</label>
-    <select id="room_id" name="room_id" required>
-        <option value="">-- Select a Room --</option>
-        <?php while ($room = $roomsList->fetch_assoc()): ?>
-            <?php $selected = ($room_id == $room['id']) ? 'selected' : ''; ?>
-            <option value="<?= $room['id'] ?>" <?= $selected ?>>
-                Room <?= htmlspecialchars($room['room_no']) ?> – <?= htmlspecialchars($room['type']) ?> – $<?= number_format($room['price'],2) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-
-    <!-- Guest Information -->
-    <label>Guests Information</label>
-    <div id="guests-container">
-        <div class="guest" data-index="0">
-            <h4>Guest 1</h4>
-            <input type="text" name="guests[0][guest_name]" placeholder="Full Name" required>
-            <input type="email" name="guests[0][guest_email]" placeholder="Email" required>
-            <input type="text" name="guests[0][guest_phone]" placeholder="Phone" required>
-            <input type="text" name="guests[0][guest_nid]" placeholder="NID / Passport Number" required>
-        </div>
+<link rel="stylesheet" href="./css/bookroom.css">
+<!-- Booking Header -->
+<section class="booking-header">
+    <div class="container">
+        <h1>Book Your Stay</h1>
+        <p>Experience luxury and comfort at its finest</p>
     </div>
-    <button type="button" onclick="addGuest()">Add Another Guest</button>
+</section>
 
-    <!-- Services -->
-    <?php if (!empty($services)): ?>
-        <label>Additional Services</label>
-        <div style="border:1px solid #eee; padding:8px; border-radius:6px;">
-            <?php foreach ($services as $s): ?>
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
-                    <label style="flex:1;">
-                        <input type="checkbox" name="services[<?= $s['id'] ?>]" value="1" onchange="toggleQty(this, <?= $s['id'] ?>)">
-                        <?= htmlspecialchars($s['name']) ?> - $<?= number_format($s['price'],2) ?>
-                    </label>
-                    <input type="number" name="services_qty[<?= $s['id'] ?>]" id="svc_qty_<?= $s['id'] ?>" value="1" min="1" style="width:72px; display:none;">
-                </div>
-            <?php endforeach; ?>
+<div class="booking-container">
+    <?php if ($error): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> <?= $error ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($success): ?>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <?= $success ?>
         </div>
     <?php endif; ?>
 
-    <button type="submit">Book Now</button>
-</form>
+    <div class="booking-form">
+        <form method="post" action="bookroom.php" onsubmit="return prepareBookingDates()">
+            <!-- Personal Information Section -->
+            <h3><i class="fas fa-user-circle"></i> Personal Details</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name"
+                            value="<?= htmlspecialchars($_SESSION['fullname'] ?? '') ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" 
+                        value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" 
+                        required placeholder="Enter your email address">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="text" id="phone" name="phone" 
+                        value="<?= htmlspecialchars($_SESSION['phone'] ?? '') ?>" 
+                        required placeholder="Enter your phone number">
+                </div>
+            </div>
+
+            <!-- Booking Details Section -->
+            <h3><i class="fas fa-calendar-alt"></i> Booking Details</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="checkin"><i class="fas fa-calendar-check"></i> Check-in Date</label>
+                    <input type="text" id="checkin" name="checkin" 
+                        class="datepicker" placeholder="Select check-in date" required readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="checkout"><i class="fas fa-calendar-times"></i> Check-out Date</label>
+                    <input type="text" id="checkout" name="checkout" 
+                        class="datepicker" placeholder="Select check-out date" required readonly>
+                </div>
+
+                <div class="form-group span-full">
+                    <label for="room_id"><i class="fas fa-bed"></i> Select Your Room</label>
+                    <select id="room_id" name="room_id" required onchange="updateBookingSummary()" class="room-select">
+                        <option value="">-- Select a Room --</option>
+                        <?php while ($room = $roomsList->fetch_assoc()): ?>
+                            <?php $selected = ($room_id == $room['id']) ? 'selected' : ''; ?>
+                            <option value="<?= $room['id'] ?>" data-price="<?= $room['price'] ?>" <?= $selected ?>>
+                                Room <?= htmlspecialchars($room['room_no']) ?> – <?= htmlspecialchars($room['type']) ?> 
+                                – $<?= number_format($room['price'],2) ?>/night
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+            </div>
+
+                <!-- Guests Section -->
+            <div class="guest-section">
+                <h3><i class="fas fa-users"></i> Guest Information</h3>
+                <p class="section-description">Please provide details for all staying guests</p>
+                
+                <div id="guests-container">
+                    <div class="guest-form" data-index="0">
+                        <div class="guest-header">
+                            <h4><i class="fas fa-user-check"></i> Primary Guest</h4>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-signature"></i> Full Name</label>
+                                <input type="text" name="guests[0][guest_name]" class="guest-input" 
+                                    placeholder="Enter full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" name="guests[0][guest_email]" class="guest-input" 
+                                    placeholder="Enter email address" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-phone-alt"></i> Phone</label>
+                                <input type="text" name="guests[0][guest_phone]" class="guest-input" 
+                                    placeholder="Enter phone number" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-id-card"></i> ID/Passport</label>
+                                <input type="text" name="guests[0][guest_nid]" class="guest-input" 
+                                    placeholder="Enter ID or passport number" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-secondary" onclick="addGuest()">
+                    <i class="fas fa-user-plus"></i> Add Additional Guest
+                </button>
+            </div>
+
+            <!-- Services Section -->
+            <?php if (!empty($services)): ?>
+            <div class="services-section">
+                <h3><i class="fas fa-concierge-bell"></i> Additional Services</h3>
+                <p class="section-description">Enhance your stay with our premium services</p>
+                
+                <div class="services-grid">
+                    <?php foreach ($services as $s): ?>
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-spa"></i>
+                        </div>
+                        <div class="service-details">
+                            <h4 class="service-name"><?= htmlspecialchars($s['name']) ?></h4>
+                            <div class="service-price">$<?= number_format($s['price'],2) ?> per service</div>
+                            </div>
+                            <div class="service-controls">
+                                <input type="checkbox" name="services[<?= $s['id'] ?>]" value="1" 
+                                    onchange="toggleQty(this, <?= $s['id'] ?>); updateBookingSummary();">
+                                <input type="number" class="service-quantity" name="services_qty[<?= $s['id'] ?>]" 
+                                    id="svc_qty_<?= $s['id'] ?>" value="1" min="1" 
+                                    data-price="<?= $s['price'] ?>"
+                                    onchange="updateBookingSummary()"
+                                    style="display:none;">
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-check"></i> Complete Booking
+                </button>
+            </form>
+        </div>
+
+        <!-- Booking Summary Sidebar -->
+        <div class="booking-summary">
+            <div class="summary-header">
+                <h3><i class="fas fa-receipt"></i> Booking Summary</h3>
+            </div>
+            <div id="summary-details">
+                <div class="summary-item">
+                    <span>Room Charge</span>
+                    <span id="room-charge">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Number of Nights</span>
+                    <span id="num-nights">0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Services</span>
+                    <span id="services-total">$0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total Amount</span>
+                    <span id="total-amount">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -246,41 +358,148 @@ include("includes/navbar.php");
 
 <script>
 let guestIndex = 1;
+
+// Initialize date pickers
+const checkinPicker = flatpickr("#checkin", {
+    dateFormat: "d/m/Y",
+    minDate: "today",
+    onChange: function(selectedDates) {
+        checkoutPicker.set('minDate', selectedDates[0]);
+        updateBookingSummary();
+    }
+});
+
+const checkoutPicker = flatpickr("#checkout", {
+    dateFormat: "d/m/Y",
+    minDate: "today",
+    onChange: function() {
+        updateBookingSummary();
+    }
+});
+
 function addGuest() {
     const container = document.getElementById('guests-container');
     const div = document.createElement('div');
-    div.classList.add('guest');
+    div.className = 'guest-form';
     div.dataset.index = guestIndex;
     div.innerHTML = `
-        <h4>Guest ${guestIndex+1}</h4>
-        <input type="text" name="guests[${guestIndex}][guest_name]" placeholder="Full Name" required>
-        <input type="email" name="guests[${guestIndex}][guest_email]" placeholder="Email" required>
-        <input type="text" name="guests[${guestIndex}][guest_phone]" placeholder="Phone" required>
-        <input type="text" name="guests[${guestIndex}][guest_nid]" placeholder="NID / Passport Number" required>
-        <button type="button" onclick="this.parentElement.remove()">Remove</button>
+        <div class="guest-header">
+            <h4>Additional Guest ${guestIndex + 1}</h4>
+            <button type="button" class="btn-secondary" onclick="removeGuest(this)">
+                <i class="fas fa-times"></i> Remove
+            </button>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="guests[${guestIndex}][guest_name]" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="guests[${guestIndex}][guest_email]" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="guests[${guestIndex}][guest_phone]" placeholder="Enter phone number" required>
+            </div>
+            <div class="form-group">
+                <label>ID/Passport</label>
+                <input type="text" name="guests[${guestIndex}][guest_nid]" placeholder="Enter ID or passport number" required>
+            </div>
+        </div>
     `;
     container.appendChild(div);
     guestIndex++;
 }
 
+function removeGuest(button) {
+    button.closest('.guest-form').remove();
+}
+
 function toggleQty(checkbox, id) {
     const el = document.getElementById('svc_qty_' + id);
     el.style.display = checkbox.checked ? 'inline-block' : 'none';
+    if (!checkbox.checked) {
+        el.value = 1;
+    }
 }
 
-flatpickr("#checkin", { dateFormat: "d/m/Y", minDate: "today" });
-flatpickr("#checkout", { dateFormat: "d/m/Y", minDate: "today" });
+function calculateNights(checkin, checkout) {
+    if (!checkin || !checkout) return 0;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const startDate = parseDate(checkin);
+    const endDate = parseDate(checkout);
+    return Math.round(Math.abs((startDate - endDate) / oneDay));
+}
+
+function parseDate(dateStr) {
+    const [day, month, year] = dateStr.split('/');
+    return new Date(year, month - 1, day);
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
+
+function updateBookingSummary() {
+    const roomSelect = document.getElementById('room_id');
+    const checkin = document.getElementById('checkin').value;
+    const checkout = document.getElementById('checkout').value;
+    
+    // Calculate room charge
+    let roomPrice = 0;
+    if (roomSelect.value) {
+        const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+        roomPrice = parseFloat(selectedOption.dataset.price);
+    }
+    
+    // Calculate nights
+    const nights = calculateNights(checkin, checkout);
+    const roomTotal = roomPrice * nights;
+    
+    // Calculate services
+    let servicesTotal = 0;
+    document.querySelectorAll('.service-controls input[type="checkbox"]:checked').forEach(checkbox => {
+        const id = checkbox.name.match(/\d+/)[0];
+        const qtyInput = document.getElementById(`svc_qty_${id}`);
+        const price = parseFloat(qtyInput.dataset.price);
+        const qty = parseInt(qtyInput.value);
+        servicesTotal += price * qty;
+    });
+    
+    // Update summary
+    document.getElementById('room-charge').textContent = formatCurrency(roomTotal);
+    document.getElementById('num-nights').textContent = nights;
+    document.getElementById('services-total').textContent = formatCurrency(servicesTotal);
+    document.getElementById('total-amount').textContent = formatCurrency(roomTotal + servicesTotal);
+}
 
 function prepareBookingDates() {
     const checkin = document.getElementById('checkin').value.trim();
     const checkout = document.getElementById('checkout').value.trim();
     const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+    
     if (!dateRegex.test(checkin) || !dateRegex.test(checkout)) {
         alert('Please enter dates in dd/mm/yyyy format.');
         return false;
     }
+    
+    const startDate = parseDate(checkin);
+    const endDate = parseDate(checkout);
+    
+    if (endDate <= startDate) {
+        alert('Check-out date must be after check-in date.');
+        return false;
+    }
+    
     return true;
 }
+
+// Initial summary update
+document.addEventListener('DOMContentLoaded', updateBookingSummary);
 </script>
 
 <?php include("includes/footer.php"); ?>

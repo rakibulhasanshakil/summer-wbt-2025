@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_payment'])) {
 }
 
 include("../includes/header.php");
-include("../includes/navbar.php");
 ?>
 <link rel="stylesheet" href="/hotel_management_system/css/manage_payments.css">
 

@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
 }
 
 include("../includes/header.php");
-include("../includes/navbar.php");
 ?>
 <link rel="stylesheet" href="/hotel_management_system/css/manage_bookings.css">
 

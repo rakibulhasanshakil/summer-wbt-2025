@@ -30,7 +30,7 @@ function parseDateInput($d) {
     }
     // fallback try strtotime
     $ts = strtotime($d);
-    if ($ts) return date('d-m-y', $ts);
+    if ($ts) return date('Y-m-d', $ts);
     return null;
 }
 ?>

@@ -19,9 +19,7 @@ if ($action && $id) {
         $stmt->bind_param("i",$id); $stmt->execute(); $stmt->close();
     }
 }
-include("../includes/header.php");
-include("../includes/navbar.php");
-?>
+include("../includes/header.php");?>
 <div class="container">
 <h2>Manage Users</h2>
 <div class="list">

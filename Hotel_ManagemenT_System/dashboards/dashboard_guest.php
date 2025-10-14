@@ -6,7 +6,6 @@ if (!isset($_SESSION['usertype']) || $_SESSION['usertype'] !== 'guest') {
     exit;
 }
 include("../includes/header.php");
-include("../includes/navbar.php");
 ?>
 <link rel="stylesheet" href="/hotel_management_system/css/dashboard.css">
 

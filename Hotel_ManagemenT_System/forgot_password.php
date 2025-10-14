@@ -30,21 +30,93 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 <?php include("includes/header.php"); ?>
-<?php include("includes/navbar.php"); ?>
-<link rel="stylesheet" href="/hotel_management_system/css/signin.css">
-<div class="container">
-    <h2>Forgot Password</h2>
-    <?php if ($error) echo "<div class='error'>$error</div>"; ?>
-    <?php if ($success) echo "<div class='success'>$success</div>"; ?>
+<link rel="stylesheet" href="/hotel_management_system/css/auth.css">
 
-    <form method="post">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="Enter registered email" required>
-        <button type="submit">Get Reset Link</button>
-    </form>
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h2>Grand Palace Hotel</h2>
+                </div>
+                <div class="title-container">
+                    <div class="title-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h1>Password Recovery</h1>
+                    <p class="auth-description">
+                        <i class="fas fa-info-circle"></i>
+                        Enter your registered email address to receive password reset instructions
+                    </p>
+                </div>
+            </div>
 
-    <p style="text-align:center;margin-top:10px;">
-        <a href="signin.php" style="color:#1abc9c;">Back to Login</a>
-    </p>
+            <?php if ($error): ?>
+                <div class="message error">
+                    <div class="message-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="message-content">
+                        <strong>Error</strong>
+                        <p><?php echo $error; ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($success): ?>
+                <div class="message success">
+                    <div class="message-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="message-content">
+                        <strong>Success</strong>
+                        <p><?php echo $success; ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" class="auth-form">
+                <div class="form-field">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <div class="input-group">
+                       
+                        </div>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your registered email"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <div class="btn-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <span>Send Reset Instructions</span>
+                </button>
+
+                <div class="auth-links">
+                    <a href="signin.php" class="link-primary">
+                        <div class="link-icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <span>Return to Sign In</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<?php include("includes/footer.php"); ?>
 <?php include("includes/footer.php"); ?>

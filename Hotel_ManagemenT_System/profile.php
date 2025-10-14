@@ -65,29 +65,63 @@ $res = $stmt->get_result();
 $user = $res->fetch_assoc();
 $stmt->close();
 ?>
-<?php include("includes/header.php"); include("includes/navbar.php"); ?>
-<link rel="stylesheet" href="/hotel_management_system/css/signup.css">
-<div class="container">
-<h2>Profile</h2>
-<?php if ($error) echo "<div class='error'>{$error}</div>"; ?>
-<?php if ($success) echo "<div class='success'>{$success}</div>"; ?>
-<form method="post" action="profile.php" onsubmit="return confirm('Save changes to profile?');">
-    <label>Full Name</label>
-    <input type="text" name="fullname" value="<?php echo htmlspecialchars($user['fullname']); ?>" required>
-    <label>Email (cannot change)</label>
-    <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
-    <label>Phone</label>
-    <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>">
-    <label>NID / Passport</label>
-    <input type="text" name="nid_passport" value="<?php echo htmlspecialchars($user['nid_passport']); ?>" required>
-    <label>New Password (leave blank to keep)</label>
-    <input type="password" name="password" placeholder="New password">
-    <button type="submit">Save Profile</button>
-</form>
+<?php include("includes/header.php");  ?>
+<link rel="stylesheet" href="/hotel_management_system/css/profile.css">
 
-<form method="post" action="profile.php" style="margin-top:14px;" onsubmit="return confirm('Are you sure you want to DELETE your account? This cannot be undone.');">
-    <input type="hidden" name="delete_account" value="1">
-    <button type="submit" style="background:#c0392b;">Delete Account</button>
-</form>
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <h2 class="profile-title">My Profile</h2>
+        <p class="profile-subtitle"><?php echo htmlspecialchars($user['usertype']); ?> Account</p>
+    </div>
+
+    <?php if ($error): ?>
+        <div class="alert alert-error"><?php echo $error; ?></div>
+    <?php endif; ?>
+    
+    <?php if ($success): ?>
+        <div class="alert alert-success"><?php echo $success; ?></div>
+    <?php endif; ?>
+
+    <form method="post" action="profile.php" class="profile-form" onsubmit="return confirm('Save changes to profile?');">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullname" value="<?php echo htmlspecialchars($user['fullname']); ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>">
+        </div>
+
+        <div class="form-group">
+            <label>NID / Passport Number</label>
+            <input type="text" name="nid_passport" value="<?php echo htmlspecialchars($user['nid_passport']); ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="password" placeholder="Leave blank to keep current password">
+        </div>
+
+        <button type="submit" class="save-button">Save Changes</button>
+    </form>
+
+    <div class="delete-form">
+        <h3 class="delete-heading">Delete Account</h3>
+        <p class="delete-warning">Warning: This action is permanent and cannot be undone. All your data, including booking history and personal information, will be permanently deleted.</p>
+        
+        <form method="post" action="profile.php" onsubmit="return confirm('Are you sure you want to DELETE your account? This cannot be undone.');">
+            <input type="hidden" name="delete_account" value="1">
+            <button type="submit" class="delete-button">Delete My Account</button>
+        </form>
+    </div>
 </div>
 <?php include("includes/footer.php"); ?>

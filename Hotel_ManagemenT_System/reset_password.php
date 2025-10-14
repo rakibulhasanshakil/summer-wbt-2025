@@ -47,48 +47,159 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <?php include("includes/header.php"); ?>
-<?php include("includes/navbar.php"); ?>
-<link rel="stylesheet" href="/hotel_management_system/css/signin.css">
+<link rel="stylesheet" href="/hotel_management_system/css/auth.css">
 
-<div class="container">
-    <h2>Reset Password</h2>
-    <?php if ($error): ?>
-        <div class="error"><?= $error ?></div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div class="success"><?= $success ?></div>
-    <?php endif; ?>
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h2>Grand Palace Hotel</h2>
+                </div>
+                <div class="title-container">
+                    <div class="title-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h1>Reset Password</h1>
+                    <p class="auth-description">
+                        <i class="fas fa-shield-alt"></i>
+                        Create a strong password for your account
+                    </p>
+                </div>
+            </div>
 
-    <?php if (!$success): ?>
-    <form method="post" id="resetForm">
-        <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+            <?php if ($error): ?>
+                <div class="message error">
+                    <div class="message-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="message-content">
+                        <strong>Error</strong>
+                        <p><?= $error ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-        <label>New Password</label>
-        <input type="password" name="newpass" id="newpass" required oninput="checkStrength()">
-        <div id="strength-bar" style="height:5px;background:#ccc;border-radius:4px;margin:6px 0;">
-            <div id="strength" style="height:100%;width:0%;background:red;border-radius:4px;transition:width 0.3s;"></div>
+            <?php if ($success): ?>
+                <div class="message success">
+                    <div class="message-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="message-content">
+                        <strong>Success</strong>
+                        <p><?= $success ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!$success): ?>
+            <form method="post" id="resetForm" class="auth-form">
+                <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+
+                <div class="form-field">
+                    <label for="newpass">
+                        New Password
+                    </label>
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="newpass" 
+                            name="newpass" 
+                            required 
+                            oninput="checkStrength()"
+                            placeholder="Enter your new password"
+                        >
+                        <div class="password-toggle">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div id="strength" class="strength-fill"></div>
+                        </div>
+                        <small id="strength-text" class="strength-text">
+                            <i class="fas fa-info-circle"></i>
+                            Password strength: weak
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="conf">
+                        Confirm Password
+                    </label>
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="conf" 
+                            name="conf" 
+                            required
+                            placeholder="Confirm your new password"
+                        >
+                        <div class="password-toggle">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <div class="btn-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <span>Update Password</span>
+                </button>
+
+                <div class="auth-links">
+                    <a href="signin.php" class="link-primary">
+                        <div class="link-icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <span>Back to Sign In</span>
+                    </a>
+                </div>
+            </form>
+            <?php endif; ?>
         </div>
-        <small id="strength-text" style="display:block;margin-bottom:10px;color:#777;">Password strength: weak</small>
-
-        <label>Confirm Password</label>
-        <input type="password" name="conf" required>
-
-        <button type="submit">Reset Password</button>
-    </form>
-    <?php endif; ?>
+    </div>
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password visibility toggle
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+});
+
 function checkStrength() {
     const pass = document.getElementById('newpass').value;
     const bar = document.getElementById('strength');
     const text = document.getElementById('strength-text');
-
+    
     let score = 0;
-    if (pass.length >= 8) score++;
-    if (/[A-Z]/.test(pass)) score++;
-    if (/[0-9]/.test(pass)) score++;
-    if (/[@$!%*?&]/.test(pass)) score++;
+    let checks = {
+        length: pass.length >= 8,
+        uppercase: /[A-Z]/.test(pass),
+        number: /[0-9]/.test(pass),
+        special: /[@$!%*?&]/.test(pass)
+    };
+
+    score = Object.values(checks).filter(Boolean).length;
 
     let strength = '';
     let color = '';
@@ -96,8 +207,54 @@ function checkStrength() {
 
     switch(score) {
         case 0:
+            strength = 'Very Weak';
+            color = '#ff4444';
+            width = '10%';
+            break;
         case 1:
             strength = 'Weak';
+            color = '#ffa700';
+            width = '25%';
+            break;
+        case 2:
+            strength = 'Medium';
+            color = '#ffee00';
+            width = '50%';
+            break;
+        case 3:
+            strength = 'Strong';
+            color = '#9dff00';
+            width = '75%';
+            break;
+        case 4:
+            strength = 'Very Strong';
+            color = '#00ff55';
+            width = '100%';
+            break;
+    }
+
+    bar.style.width = width;
+    bar.style.backgroundColor = color;
+    text.innerHTML = `<i class="fas fa-info-circle"></i> Password strength: ${strength}`;
+
+    // Update requirements list
+    const requirements = [
+        { met: checks.length, text: 'At least 8 characters' },
+        { met: checks.uppercase, text: 'At least 1 uppercase letter' },
+        { met: checks.number, text: 'At least 1 number' },
+        { met: checks.special, text: 'At least 1 special character' }
+    ];
+
+    const reqList = document.querySelector('.password-requirements');
+    if (reqList) {
+        reqList.innerHTML = requirements.map(req => 
+            `<li class="${req.met ? 'met' : ''}">
+                <i class="fas fa-${req.met ? 'check' : 'times'}"></i>
+                ${req.text}
+            </li>`
+        ).join('');
+    }
+}
             color = 'red';
             width = '25%';
             break;
